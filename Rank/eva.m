@@ -13,26 +13,27 @@
 %rot_score=rot_Assessment(VehicleSpeed,angle);
 
 function [score_return]=eva(Time_score,acc_score,risk_score,com_score,rot_score)
-A0=[1, 3, 4, 7,	9;...
-        1/3, 1, 2, 5, 7;...
-        1/4, 1/2, 1, 4, 6;...
-        1/7, 1/5, 1/4, 1, 3;...
-        1/9, 1/7, 1/6, 1/3, 1];
-[v,d]=eigs(A0);
-lamdamax=max(d(:));
-[m,n]=size(v); 
-%将特征向量标准化  
-sum = 0;  
-for i=1:m  
-    sum = sum + v(i,1);  
-end  
-w0 = v(:,1);  
-for i=1:m  
-    w0(i,1)= v(i,1)/sum;  
-end  
+% A0=[1, 3, 4, 7,	9;...
+%         1/3, 1, 2, 5, 7;...
+%         1/4, 1/2, 1, 4, 6;...
+%         1/7, 1/5, 1/4, 1, 3;...
+%         1/9, 1/7, 1/6, 1/3, 1];
+% [v,d]=eigs(A0);
+% lamdamax=max(d(:));
+% [m,n]=size(v); 
+% %将特征向量标准化  
+% sum = 0;  
+% for i=1:m  
+%     sum = sum + v(i,1);  
+% end  
+% w0 = v(:,1);  
+% for i=1:m  
+%     w0(i,1)= v(i,1)/sum;  
+% end  
+% 
+% CI=(lamdamax-5)/4;
 
-CI=(lamdamax-5)/4;
-
+w0 = [0.4993; 0.2436; 0.1631; 0.0613; 0.0327];
 score = w0 .* [Time_score; acc_score; risk_score; com_score; rot_score];
 percent = score ./ 10;  % percentage in total
 ppercent = percent ./ w0;  % percentage in their own element

@@ -31,7 +31,7 @@ classdef myvector < handle
             obj.data(obj.indice,:) = val;
         end
         
-        function val = size(obj)
+        function val = mySize(obj)
             val = obj.indice;
         end
         

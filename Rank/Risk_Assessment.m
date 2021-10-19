@@ -20,7 +20,7 @@ carPose(3, :) = 0;
 %% 检测碰撞
 % 计算车辆角点到障碍物边线(直线)的距离
 disCar2Ref = NaN .* ones(3, 16);
-disCar2Obs = NaN .* ones(3, 16);
+disCar2Obs = NaN .* ones(3, 24);
 
 vecRefPose = diff(refPose, 1, 2);  
 auxVecRef2Car = carPose - refPose(:,2);
@@ -29,8 +29,10 @@ disCar2Ref(:, 9:16) = bsxfun(DisFun, auxVecRef2Car, vecRefPose(:,2));
 
 vecObstaclePose = diff(obstaclePose, 1, 2);
 auxVecObs2Car = carPose - obstaclePose(:,2);
+auxVecObs2Car2 = carPose - obstaclePose(:,4);
 disCar2Obs(:, 1:8) = bsxfun(DisFun, auxVecObs2Car, vecObstaclePose(:,1));
 disCar2Obs(:, 9:16) = bsxfun(DisFun, auxVecObs2Car, vecObstaclePose(:,2));
+disCar2Obs(:, 17:24) = bsxfun(DisFun, auxVecObs2Car2, vecObstaclePose(:,3));
 
 % 计算障碍物角点到车子边线(直线)的距离
 disRef2Car = NaN .* ones(3, 8);
@@ -55,11 +57,11 @@ elseif sum(disObs2Car(3,:) <=0) == 8
 else
     for num = 1 : 8
         judgeRef = disCar2Ref(:,[num 8+num]);
-        judgeObs = disCar2Obs(:,[num 8+num]);
+        judgeObs = disCar2Obs(:,[num 8+num 16+num]);
         if sum(judgeRef(3,:) >=0) == 2
             collisionFlag = 1;  %和前车发生碰撞
             return;
-        elseif sum(judgeObs(3,:) <=0) ==2
+        elseif sum(judgeObs(3,:) <=0) == 3
             collisionFlag = 2;  %和后车发生碰撞
             return;
         end
@@ -95,7 +97,7 @@ for num2P = 1 : 2
 end
 
 disCar2Obs(1:2,:)=[];
-for num2P = 1 : 2
+for num2P = 1 : 3
     for num = 1 : 8
         auxVecObs2Car = carPose(:, num) - obstaclePose(:, num2P);
         k = dot(auxVecObs2Car, vecObstaclePose(:, num2P)) / norm(vecObstaclePose(:, num2P))^2;
@@ -104,8 +106,8 @@ for num2P = 1 : 2
         k3 = ~(k1||k2);
         numSave = num + 8*(num2P-1);
         disCar2Obs(k1, numSave) = norm(carPose(:, num) - obstaclePose(:, num2P + 1));
-        disCar2Obs(k2, numSave) = norm(auxVecRef2Car);
-        disCar2Obs(k3, numSave) = abs(disCar2Ref(numSave));
+        disCar2Obs(k2, numSave) = norm(auxVecObs2Car);
+        disCar2Obs(k3, numSave) = abs(disCar2Obs(numSave));
     end
 end
 % 计算障碍物角点到车子边线(线段)的距离
