@@ -53,7 +53,7 @@ classdef myvector < handle
         end
         
         function val = at(obj, row)
-            if(row <=0 || obj.indice < row)
+            if(row <0)
                 error('input error');
             end
             val = obj.data(row,:);
@@ -64,7 +64,7 @@ classdef myvector < handle
         end
         
         function val = get_above(obj, row)
-            if(row <=0 || obj.indice < row)
+            if(row <=0)
                 error('input error');
             end
             val = obj.data(1 : row, :);
